@@ -69,12 +69,10 @@
         .start-primary:active, .start-secondary:active { transform:translateY(3px); border-bottom-width:2px; }
         #game-screen { background:#f1f8f0; }
         #result-screen { background:radial-gradient(circle at top,#fff0b9,#e7f4e4); }
-        #ranking-screen { background:#f2f7e9; }
         .choice-btn { min-height:84px; }
         #current-q, #score-display, #final-score { color:var(--forest); }
         #game-screen .kanji-text { color:var(--ink); }
         #result-screen .bg-blue-50 { background:#ecf7eb; border-color:#cfe7d3; }
-        #ranking-screen h2 { color:var(--forest); }
 
         @media (max-width:650px) {
           .start-shell { padding:12px 14px 28px; }
@@ -188,11 +186,17 @@
         .sticker-header h2 { font-size:clamp(24px,4vw,38px); font-weight:1000; margin:0; }
         .sticker-header p { font-size:14px; font-weight:800; margin:8px 0; }
         .sticker-header strong { display:inline-block; border-radius:999px; background:white; padding:6px 20px; border:2px solid #c6e1ce; }
+        .sticker-grade-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:16px; }
+        .sticker-grade-tabs button { min-height:44px; border:2px solid #bdd8c5; border-radius:12px; background:#fff; color:var(--forest); font-size:14px; font-weight:900; }
+        .sticker-grade-tabs button.active { background:#2e7659; border-color:#245c45; color:#fff; }
+        .sticker-section-title { grid-column:1/-1; color:var(--forest); font-size:18px; font-weight:900; margin:8px 0 0; }
         .sticker-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; padding:22px 0; flex:1; align-content:start; }
         .sticker-card { min-width:0; border:2px solid #cde4d0; border-radius:18px; background:#fffefa; text-align:center; padding:10px 5px; box-shadow:0 4px 0 #d9e9d7; }
+        .sticker-card.gold-sticker { border-color:#d6a940; background:#fff8df; box-shadow:0 4px 0 #ead28e; }
         .sticker-card.locked { background:#eef2ea; border-color:#d8ded8; box-shadow:none; }
         .sticker-card img { display:block; width:min(100%,130px); aspect-ratio:1; object-fit:contain; margin:auto; }
         .sticker-card.locked img { filter:grayscale(1); opacity:.16; }
+        .sticker-card.gold-sticker:not(.locked) img, #sticker-reward .gold-reward { border:4px solid #d9a726; border-radius:50%; box-shadow:0 0 0 3px #fff3bc,0 0 16px #e7b83e80; }
         .sticker-card span { display:block; margin-top:5px; color:var(--forest); font-size:14px; font-weight:900; }
         .sticker-card.locked span { color:#7d8b82; }
         .sticker-back { position:sticky; bottom:0; width:min(100%,440px); align-self:center; padding:12px; border-radius:16px; background:#2e7659; color:white; font-weight:900; font-size:18px; box-shadow:0 3px 10px #234d3740; }
@@ -204,7 +208,6 @@
         #result-screen .bg-white { display:flex; flex-direction:column; }
         #result-stickers-btn { order:1; }
         #home-btn { order:2; }
-        #new-record-box { order:3; }
         @media (max-width:650px) {
           #result-screen .bg-white { padding:18px; }
           #result-screen .text-\[80px\] { font-size:64px; }
@@ -308,17 +311,11 @@
                 </div>
 
                 <div class="mb-5">
-                    <p class="text-xs font-bold text-gray-500 mb-1">キミの ランクは</p>
+                    <p class="text-xs font-bold text-gray-500 mb-1">こんかいの ひょうか</p>
                     <div id="rank-display" class="text-[80px] font-black text-red-500 bounce-in leading-none drop-shadow-md"></div>
                 </div>
 
                 <div id="sticker-reward" class="mb-5 rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-3 text-center font-bold" aria-live="polite"></div>
-
-                <div id="new-record-box" class="hidden mb-6 bg-yellow-50 p-4 rounded-2xl border-2 border-yellow-400 shadow-inner">
-                    <p class="text-yellow-700 font-bold text-sm mb-3">✨ ランキングにはいったよ！ ✨</p>
-                    <input type="text" id="player-name" placeholder="なまえをいれてね" class="w-full p-2.5 border-2 border-yellow-200 rounded-xl text-center mb-3 text-sm font-bold focus:outline-none focus:border-yellow-400" maxlength="10">
-                    <button id="save-score-btn" class="w-full py-2.5 bg-yellow-500 text-white font-bold rounded-xl border-b-4 border-yellow-700 active:translate-y-1 active:border-b-0 transition-all shadow-sm">きろくする</button>
-                </div>
 
                 <button id="result-stickers-btn" class="w-full py-3.5 mb-3 bg-emerald-600 text-white text-base font-bold rounded-full shadow border-b-4 border-emerald-800 active:translate-y-1 active:border-b-0 transition-all">📒 シール手帳を見る</button>
                 <button id="home-btn" class="w-full py-3.5 bg-gray-200 text-gray-700 text-base font-bold rounded-full shadow border-b-4 border-gray-400 active:translate-y-1 active:border-b-0 transition-all">さいしょに もどる</button>
@@ -329,20 +326,13 @@
     <!-- シール手帳 -->
     <section id="sticker-screen" class="hidden screen sticker-screen" aria-labelledby="sticker-title">
       <div class="sticker-shell">
-        <header class="sticker-header"><h2 id="sticker-title">📒 漢字の森 シール手帳</h2><p>満点を とると、シールが 1まい もらえるよ！</p><strong id="sticker-count">0 / 34 まい</strong></header>
+        <header class="sticker-header"><h2 id="sticker-title">📒 漢字の森 シール手帳</h2><p>満点で通常シール1まい。2回続けて満点なら金色シール1まい！</p><strong id="sticker-count">0 / 27 まい</strong></header>
+        <div id="sticker-grade-tabs" class="sticker-grade-tabs" aria-label="シールを見る学年"></div>
         <div id="sticker-grid" class="sticker-grid"></div>
         <button id="sticker-back-btn" class="sticker-back">← もどる</button>
       </div>
     </section>
 
-    <!-- ランキング画面 -->
-    <div id="ranking-screen" class="hidden screen bg-yellow-50">
-        <div class="w-full max-w-md mx-auto p-4 flex flex-col h-full">
-            <h2 class="text-2xl font-black text-yellow-600 text-center my-4 shrink-0 drop-shadow-sm">👑 ランキング 👑</h2>
-            <div class="bg-white rounded-2xl shadow-sm flex-1 min-h-0 p-2 overflow-y-auto mb-4 border-2 border-yellow-200" id="ranking-list"></div>
-            <button id="ranking-back-btn" class="w-full py-3.5 bg-gray-200 text-gray-700 text-base font-bold rounded-full shadow border-b-4 border-gray-400 active:translate-y-1 active:border-b-0 transition-all shrink-0">もどる</button>
-        </div>
-    </div>
 
     <script src="assets/draw-sentences.js"></script>
     <script>
@@ -377,14 +367,33 @@
         let attempts = 0;
         let audioContext = null;
         let soundEnabled = (() => { try { return localStorage.getItem('kanjiAdventureSound') !== 'off'; } catch (_) { return true; } })();
-        let rankingReturnScreen;
         let gameRunId = 0;
         let rewardedRunId = -1;
         let stickerReturnScreen;
         
-        const STICKER_KEY = 'kanjiForestStickersV1';
+        const STICKER_KEY = 'kanjiForestGradeStickersV2';
+        const STREAK_KEY = 'kanjiForestPerfectStreakV1';
         const STICKER_NAMES = ['わかば','大きな木','ふかい森','青い川','みどりの山','あさひ','三日月','あめつぶ','花','小鳥','キツネ','どんぐり','本','ふで','すずり','まきもの','鳥居','たけ','星','くも','ゆき','ホタル','ちょう','さかな','かぎ','地図','たからばこ','ランタン','方位じしん','羽','きのこ','にじ','フクロウ','金色の木'];
-        const RANKING_KEY = 'kanji_master_ranking_v4'; // 新仕様のスコア管理用
+        const gradeStickerCatalogs = Object.fromEntries(
+            [1,2,3,4,5,6].map(grade => [grade, Array.from({length:27}, (_, index) => {
+                const gold = index >= 18;
+                const number = gold ? index - 17 : index + 1;
+                const artIndex = ((grade - 1) * 27 + index) % STICKER_NAMES.length;
+                return {
+                    id: `g${grade}-${gold ? 'gold' : 'normal'}-${String(number).padStart(2,'0')}`,
+                    grade, gold,
+                    name: gold ? `金色の${STICKER_NAMES[artIndex]}` : STICKER_NAMES[artIndex],
+                    fallbackArt: `assets/stickers/sticker-${String(artIndex + 1).padStart(2,'0')}.webp`,
+                    futureArt: `assets/grade-stickers/g${grade}-${gold ? 'gold' : 'normal'}-${String(number).padStart(2,'0')}.webp`
+                };
+            })])
+        );
+        let perfectStreak = (() => {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STREAK_KEY) || '{}');
+                return saved && typeof saved === 'object' ? saved : {};
+            } catch (_) { return {}; }
+        })();
         
         const DOM = {
             startScreen: document.getElementById('start-screen'),
@@ -393,10 +402,10 @@
             setupBackBtn: document.getElementById('setup-back-btn'),
             gameScreen: document.getElementById('game-screen'),
             resultScreen: document.getElementById('result-screen'),
-            rankingScreen: document.getElementById('ranking-screen'),
             stickerScreen: document.getElementById('sticker-screen'),
             stickerGrid: document.getElementById('sticker-grid'),
             stickerCount: document.getElementById('sticker-count'),
+            stickerGradeTabs: document.getElementById('sticker-grade-tabs'),
             stickerBackBtn: document.getElementById('sticker-back-btn'),
             stickerReward: document.getElementById('sticker-reward'),
             resultStickersBtn: document.getElementById('result-stickers-btn'),
@@ -434,12 +443,7 @@
             resultGradeText: document.getElementById('result-grade-text'),
             finalScore: document.getElementById('final-score'),
             rankDisplay: document.getElementById('rank-display'),
-            newRecordBox: document.getElementById('new-record-box'),
-            playerName: document.getElementById('player-name'),
-            saveScoreBtn: document.getElementById('save-score-btn'),
-            viewStickersBtn: document.getElementById('view-stickers-btn'),
-            rankingList: document.getElementById('ranking-list'),
-            rankingBackBtn: document.getElementById('ranking-back-btn')
+            viewStickersBtn: document.getElementById('view-stickers-btn')
         };
 
         const soundButtons = document.querySelectorAll('.sound-toggle');
@@ -462,7 +466,6 @@
             DOM.setupScreen.classList.add('hidden');
             DOM.gameScreen.classList.add('hidden');
             DOM.resultScreen.classList.add('hidden');
-            DOM.rankingScreen.classList.add('hidden');
             DOM.stickerScreen.classList.add('hidden');
             screenElement.classList.remove('hidden');
             screenElement.scrollTop = 0;
@@ -969,8 +972,6 @@
             let qCountLabel = selectedCount === 'all' ? `ぜんぶ（${questions.length}問）` : `${questions.length}問`;
             DOM.resultGradeText.textContent = `${selectedGrade}年生 - ${qCountLabel}`;
             DOM.finalScore.textContent = "0";
-            DOM.newRecordBox.classList.add('hidden');
-            DOM.playerName.value = '';
             
             let currentScore = 0;
             let step = Math.max(1, Math.floor(score / 20));
@@ -980,7 +981,6 @@
                 if(currentScore >= score) {
                     currentScore = score;
                     clearInterval(timer);
-                    checkRanking();
                 }
                 DOM.finalScore.textContent = currentScore;
             }, 30);
@@ -1002,98 +1002,93 @@
         function getStickers() {
             try {
                 const saved = JSON.parse(localStorage.getItem(STICKER_KEY) || '[]');
-                return Array.isArray(saved) ? saved.filter(n => Number.isInteger(n) && n >= 0 && n < STICKER_NAMES.length) : [];
+                const validIds = new Set(Object.values(gradeStickerCatalogs).flat().map(item => item.id));
+                return Array.isArray(saved) ? saved.filter(id => validIds.has(id)) : [];
             } catch (_) { return []; }
         }
 
+        function makeStickerPicture(sticker) {
+            const picture = document.createElement('img');
+            picture.src = sticker.fallbackArt;
+            picture.alt = sticker.name + 'のシール';
+            picture.loading = 'lazy';
+            return picture;
+        }
+
         function awardStickerForPerfect() {
+            if (rewardedRunId === gameRunId) return;
+            rewardedRunId = gameRunId;
             const perfect = questions.length > 0 && score === questions.length * 10;
             DOM.stickerReward.replaceChildren();
+            const goldTurn = perfect && perfectStreak.lastGrade === selectedGrade && perfectStreak[selectedGrade] === 1;
+            perfectStreak[selectedGrade] = perfect ? (goldTurn ? 0 : 1) : 0;
+            perfectStreak.lastGrade = perfect ? selectedGrade : null;
+            try { localStorage.setItem(STREAK_KEY, JSON.stringify(perfectStreak)); } catch (_) {}
             if (!perfect) {
                 DOM.stickerReward.textContent = 'シールは満点のときに もらえるよ。つぎも がんばろう！';
                 return;
             }
-            if (rewardedRunId === gameRunId) return;
-            rewardedRunId = gameRunId;
             const owned = new Set(getStickers());
-            const available = STICKER_NAMES.map((_, index) => index).filter(index => !owned.has(index));
+            const available = gradeStickerCatalogs[selectedGrade].filter(sticker => sticker.gold === goldTurn && !owned.has(sticker.id));
             if (!available.length) {
-                DOM.stickerReward.textContent = '🎉 満点！ シールを ぜんぶ あつめたよ！';
+                const kind = goldTurn ? '金色' : 'ふつう';
+                DOM.stickerReward.textContent = `🎉 ${selectedGrade}年生の${kind}のシールは ぜんぶ あつめたよ！`;
                 return;
             }
-            const picked = available[Math.floor(Math.random() * available.length)];
-            owned.add(picked);
+            const sticker = available[Math.floor(Math.random() * available.length)];
+            owned.add(sticker.id);
             try { localStorage.setItem(STICKER_KEY, JSON.stringify([...owned])); } catch (_) {}
             const title = document.createElement('p');
-            title.textContent = '🎉 満点！ あたらしいシールを もらったよ！';
-            const picture = document.createElement('img');
-            picture.src = `assets/stickers/sticker-${String(picked + 1).padStart(2, '0')}.webp`;
-            picture.alt = STICKER_NAMES[picked] + 'のシール';
+            title.textContent = goldTurn
+                ? `✨ ${selectedGrade}年生で2回つづけて満点！ 金色シールを もらったよ！`
+                : `🎉 ${selectedGrade}年生で満点！ シールを もらったよ！ つぎも満点なら金色！`;
+            const picture = makeStickerPicture(sticker);
+            if (goldTurn) picture.classList.add('gold-reward');
             const label = document.createElement('p');
-            label.textContent = STICKER_NAMES[picked];
+            label.textContent = sticker.name;
             DOM.stickerReward.append(title, picture, label);
         }
 
-        function showStickerBook(returnScreen) {
+        function makeStickerCard(sticker, owned) {
+            const card = document.createElement('div');
+            card.className = 'sticker-card' + (sticker.gold ? ' gold-sticker' : '') + (owned ? '' : ' locked');
+            const picture = makeStickerPicture(sticker);
+            if (!owned) picture.alt = '';
+            const label = document.createElement('span');
+            label.textContent = owned ? sticker.name : '？？？';
+            card.append(picture, label);
+            return card;
+        }
+
+        function showStickerBook(returnScreen, grade = selectedGrade) {
             stickerReturnScreen = returnScreen;
             const owned = new Set(getStickers());
-            DOM.stickerCount.textContent = `${owned.size} / ${STICKER_NAMES.length} まい`;
+            DOM.stickerGradeTabs.replaceChildren();
+            for (let i = 1; i <= 6; i++) {
+                const tab = document.createElement('button');
+                tab.type = 'button';
+                tab.textContent = `${i}年生`;
+                tab.className = i === grade ? 'active' : '';
+                tab.setAttribute('aria-pressed', String(i === grade));
+                tab.addEventListener('click', () => { playClick(); showStickerBook(stickerReturnScreen, i); });
+                DOM.stickerGradeTabs.appendChild(tab);
+            }
+            const stickers = gradeStickerCatalogs[grade];
+            const gathered = stickers.filter(item => owned.has(item.id)).length;
+            const goldGathered = stickers.filter(item => item.gold && owned.has(item.id)).length;
+            DOM.stickerCount.textContent = `${grade}年生 ${gathered} / 27 まい（金色 ${goldGathered} / 9）`;
             DOM.stickerGrid.replaceChildren();
-            STICKER_NAMES.forEach((name, index) => {
-                const card = document.createElement('div');
-                card.className = 'sticker-card' + (owned.has(index) ? '' : ' locked');
-                const picture = document.createElement('img');
-                picture.src = `assets/stickers/sticker-${String(index + 1).padStart(2, '0')}.webp`;
-                picture.alt = owned.has(index) ? name : '';
-                picture.loading = 'lazy';
-                const label = document.createElement('span');
-                label.textContent = owned.has(index) ? name : '？？？';
-                card.append(picture, label);
-                DOM.stickerGrid.append(card);
-            });
+            for (const [gold, heading] of [[false, 'ふつうのシール'], [true, '✨ 金色シール（満点2回連続）']]) {
+                const sectionTitle = document.createElement('h3');
+                sectionTitle.className = 'sticker-section-title';
+                sectionTitle.textContent = heading;
+                DOM.stickerGrid.appendChild(sectionTitle);
+                stickers.filter(item => item.gold === gold).forEach(item => {
+                    DOM.stickerGrid.appendChild(makeStickerCard(item, owned.has(item.id)));
+                });
+            }
             switchScreen(DOM.stickerScreen);
         }
-
-        function getRankings() {
-            try {
-                const data = JSON.parse(localStorage.getItem(RANKING_KEY) || '[]');
-                return Array.isArray(data) ? data : [];
-            } catch(e) { return []; }
-        }
-
-        function checkRanking() {
-            let rankings = getRankings();
-            let isHighScore = false;
-            
-            if(rankings.length < 10 || score > rankings[rankings.length - 1].score) {
-                isHighScore = true;
-            }
-            
-            if(isHighScore && score > 0) {
-                DOM.newRecordBox.classList.remove('hidden');
-            } else {
-                DOM.newRecordBox.classList.add('hidden');
-            }
-        }
-
-        DOM.saveScoreBtn.addEventListener('click', () => {
-            let name = DOM.playerName.value.trim() || 'ななしさん';
-            let rankings = getRankings();
-            rankings.push({
-                name: name,
-                score: score,
-                grade: selectedGrade,
-                qCount: selectedCount === 'all' ? 'ぜんぶ' : questions.length,
-                date: new Date().toLocaleDateString()
-            });
-            rankings.sort((a, b) => b.score - a.score);
-            rankings = rankings.slice(0, 10);
-            localStorage.setItem(RANKING_KEY, JSON.stringify(rankings));
-            
-            playClick();
-            DOM.newRecordBox.classList.add('hidden');
-            showRankingScreen(DOM.resultScreen);
-        });
 
         DOM.homeBtn.addEventListener('click', () => {
             playClick();
@@ -1103,51 +1098,6 @@
         DOM.viewStickersBtn.addEventListener('click', () => { playClick(); showStickerBook(DOM.setupScreen); });
         DOM.resultStickersBtn.addEventListener('click', () => { playClick(); showStickerBook(DOM.resultScreen); });
         DOM.stickerBackBtn.addEventListener('click', () => { playClick(); switchScreen(stickerReturnScreen || DOM.setupScreen); });
-
-        DOM.rankingBackBtn.addEventListener('click', () => {
-            playClick();
-            switchScreen(rankingReturnScreen || DOM.setupScreen);
-        });
-
-        function escapeHtml(value) {
-            return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-        }
-
-        function showRankingScreen(returnScreen) {
-            rankingReturnScreen = returnScreen;
-            switchScreen(DOM.rankingScreen);
-            
-            let rankings = getRankings();
-            DOM.rankingList.innerHTML = '';
-            
-            if(rankings.length === 0) {
-                DOM.rankingList.innerHTML = '<p class="text-center text-gray-500 font-bold mt-10">まだ きろく がないよ</p>';
-                return;
-            }
-            
-            rankings.forEach((r, idx) => {
-                let div = document.createElement('div');
-                div.className = 'flex items-center justify-between p-3 border-b border-yellow-100 last:border-0';
-                
-                let rankStr = `${idx + 1}位`;
-                let rankColor = 'text-gray-500';
-                if(idx === 0) { rankStr = '🥇 1位'; rankColor = 'text-yellow-500'; }
-                if(idx === 1) { rankStr = '🥈 2位'; rankColor = 'text-gray-400'; }
-                if(idx === 2) { rankStr = '🥉 3位'; rankColor = 'text-orange-400'; }
-                
-                div.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <span class="font-black text-xl w-14 ${rankColor}">${rankStr}</span>
-                        <div>
-                            <p class="font-bold text-gray-700 text-sm">${escapeHtml(r.name)}</p>
-                            <p class="text-[10px] text-gray-400">${escapeHtml(r.grade)}年生 / ${escapeHtml(r.qCount)}問 / ${escapeHtml(r.date)}</p>
-                        </div>
-                    </div>
-                    <div class="font-black text-2xl text-blue-600">${Number(r.score) || 0}<span class="text-xs font-bold ml-1">てん</span></div>
-                `;
-                DOM.rankingList.appendChild(div);
-            });
-        }
 
         // 確実な初期化処理
         initGradeButtons();
