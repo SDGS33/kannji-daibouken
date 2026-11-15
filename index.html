@@ -64,6 +64,9 @@
         .setup-card h2 small { display:block; color:#60776c; font-size:11px; margin-top:3px; }
         #grade-buttons button, .count-btn { min-height:44px; }
         .setup-actions { display:flex; flex-direction:column; gap:10px; justify-content:end; }
+        .learned-summary { margin:0 0 10px; color:#49695a; font-size:13px; font-weight:800; line-height:1.55; }
+        .learned-edit { width:100%; min-height:48px; border:2px solid #9fc9ab; border-bottom-width:5px; border-radius:14px; background:#f2fbf3; color:var(--forest); font-size:15px; font-weight:900; }
+        .learned-edit:active { transform:translateY(3px); border-bottom-width:2px; }
         .start-primary { background:linear-gradient(#ffb855,#ec8e30); color:#fff; border:0; border-bottom:5px solid #bd671e; font-size:21px; font-weight:1000; border-radius:18px; padding:14px 20px; box-shadow:0 8px 18px #b77a2a30; }
         .start-secondary { background:#fff; color:var(--forest); border:2px solid #bad9c1; border-bottom-width:5px; font-size:14px; font-weight:900; border-radius:16px; padding:10px 16px; }
         .start-primary:active, .start-secondary:active { transform:translateY(3px); border-bottom-width:2px; }
@@ -128,6 +131,24 @@
         .setup-screen .count-btn { min-height:54px; font-size:clamp(12px,1.7vw,16px); }
         .setup-screen label { min-height:62px; }
         .setup-screen .setup-actions { align-self:stretch; }
+        .kanji-picker-screen { background:linear-gradient(155deg,#fff9e8,#e8f5e9); overflow-y:auto; }
+        .kanji-picker-shell { width:min(100%,760px); min-height:100%; margin:auto; padding:16px 16px max(92px,calc(env(safe-area-inset-bottom) + 76px)); }
+        .kanji-picker-header { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:10px; position:sticky; top:0; z-index:2; padding:6px 0 12px; background:linear-gradient(#fff9e8 78%,transparent); }
+        .kanji-picker-header h2 { margin:0; color:var(--forest); text-align:center; font-size:clamp(19px,3vw,29px); font-weight:1000; }
+        .kanji-picker-back { min-height:44px; padding:8px 12px; border:2px solid #bfd7bd; border-radius:13px; background:#fff; color:var(--forest); font-weight:900; white-space:nowrap; }
+        .kanji-picker-count { min-width:86px; text-align:center; color:var(--forest); font-size:13px; font-weight:900; }
+        .kanji-picker-help { margin:4px 0 14px; color:#557164; text-align:center; font-size:13px; font-weight:800; line-height:1.6; }
+        .kanji-picker-tools { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:14px; }
+        .kanji-picker-tools button { min-height:44px; border:2px solid #bfd9c5; border-radius:13px; background:#fff; color:var(--forest); font-weight:900; }
+        .kanji-picker-grid { display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:8px; }
+        .kanji-choice { min-width:0; aspect-ratio:1; border:2px solid #cadbcf; border-bottom-width:4px; border-radius:12px; background:#fff; color:#5e6d65; font-size:clamp(20px,4vw,30px); font-weight:900; }
+        .kanji-choice.selected { border-color:#d97920; background:#ffad49; color:#fff; box-shadow:0 3px 8px #d67d2730; }
+        .kanji-picker-footer { position:fixed; z-index:3; left:50%; bottom:0; transform:translateX(-50%); width:min(100%,760px); padding:10px 16px max(12px,env(safe-area-inset-bottom)); background:#fffdf3eF; box-shadow:0 -5px 18px #35564120; backdrop-filter:blur(8px); }
+        .kanji-picker-done { width:100%; min-height:52px; border:0; border-bottom:5px solid #256047; border-radius:16px; background:#328060; color:#fff; font-size:18px; font-weight:1000; }
+        .kanji-picker-done:disabled { border-bottom-color:#aab8ae; background:#c8d1ca; color:#fff; }
+        .kanji-picker-warning { margin:7px 0 0; color:#c24132; text-align:center; font-size:12px; font-weight:900; }
+        @media (max-width:650px) { .kanji-picker-grid { grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px; } }
+        @media (max-width:390px) { .kanji-picker-grid { grid-template-columns:repeat(5,minmax(0,1fr)); } .kanji-picker-header { grid-template-columns:auto 1fr; } .kanji-picker-count { grid-column:1/-1; justify-self:center; } }
         #game-screen { max-width:900px; overflow-y:auto; }
         #game-screen > div:nth-child(3) { min-height:250px; }
         #choice-container { max-width:540px; }
@@ -233,20 +254,36 @@
         <p class="setup-intro">学年と あそびかたを えらんでね。<br>いくつかえらぶと、問題ごとにランダムに変わるよ。</p>
         <div class="setup">
           <section class="setup-card"><h2>① がくねんを えらぼう<small>えらんだ学年までの漢字が出るよ</small></h2><div class="grid grid-cols-3 gap-2" id="grade-buttons"></div></section>
-          <section class="setup-card"><h2>② もんだいの かず</h2><div class="flex justify-between gap-1.5" id="count-buttons">
+          <section class="setup-card"><h2>② 習った漢字を えらぼう<small>いまの学年で、習ったところまでにできるよ</small></h2><p id="learned-summary" class="learned-summary"></p><button id="edit-learned-btn" class="learned-edit" type="button">習った漢字を えらぶ</button></section>
+          <section class="setup-card"><h2>③ もんだいの かず</h2><div class="flex justify-between gap-1.5" id="count-buttons">
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-gray-50 text-gray-600 border-gray-300" data-val="5">5問</button>
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-orange-500 text-white border-orange-700" data-val="10">10問</button>
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-gray-50 text-gray-600 border-gray-300" data-val="20">20問</button>
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-gray-50 text-gray-600 border-gray-300" data-val="30">30問</button>
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-gray-50 text-gray-600 border-gray-300" data-val="all">ぜんぶ</button>
           </div></section>
-          <section class="setup-card"><h2>③ あそびかたを えらぼう</h2><div class="flex flex-col gap-2">
+          <section class="setup-card"><h2>④ あそびかたを えらぼう</h2><div class="flex flex-col gap-2">
             <label class="flex items-center p-2.5 border-2 border-green-100 rounded-xl bg-green-50"><input type="checkbox" id="type-yomi" checked class="w-5 h-5 shrink-0"><span class="ml-3"><strong class="block text-sm">よみかた</strong><small class="text-gray-500">漢字の読み方を えらぶ</small></span></label>
             <label class="flex items-center p-2.5 border-2 border-green-100 rounded-xl bg-green-50"><input type="checkbox" id="type-kanji" checked class="w-5 h-5 shrink-0"><span class="ml-3"><strong class="block text-sm">かんじ さがし</strong><small class="text-gray-500">読み方に あう漢字を えらぶ</small></span></label>
             <label class="flex items-center p-2.5 border-2 border-green-100 rounded-xl bg-green-50"><input type="checkbox" id="type-draw" class="w-5 h-5 shrink-0"><span class="ml-3"><strong class="block text-sm">ゆびで かんじを かく</strong><small class="text-gray-500">短い文の □ に入る字を書く</small></span></label>
-          </div><p class="text-gray-500 text-xs mt-2">手書きの「ぜんぶ」は、その学年の漢字をすべて出すよ。</p><p id="type-warning" class="text-red-600 text-xs font-bold mt-2 hidden" role="alert">ひとつ以上 えらんでね。</p></section>
+          </div><p class="text-gray-500 text-xs mt-2">手書きの「ぜんぶ」は、えらんだ漢字を一通り出すよ。</p><p id="type-warning" class="text-red-600 text-xs font-bold mt-2 hidden" role="alert">ひとつ以上 えらんでね。</p></section>
           <div class="setup-actions"><button id="start-btn" class="start-primary">ぼうけんを はじめる！</button><button id="view-stickers-btn" class="start-secondary">📒 シール手帳を見る</button></div>
         </div>
+      </div>
+    </section>
+
+    <!-- 習った漢字の選択 -->
+    <section id="kanji-picker-screen" class="hidden screen kanji-picker-screen" aria-labelledby="kanji-picker-title">
+      <div class="kanji-picker-shell">
+        <header class="kanji-picker-header">
+          <button id="kanji-picker-back" class="kanji-picker-back" type="button">← もどる</button>
+          <h2 id="kanji-picker-title">習った漢字を えらぼう</h2>
+          <strong id="kanji-picker-count" class="kanji-picker-count">0 / 0字</strong>
+        </header>
+        <p id="kanji-picker-help" class="kanji-picker-help">習った漢字をタップしてね。オレンジ色の漢字が問題に出るよ。</p>
+        <div class="kanji-picker-tools"><button id="kanji-select-all" type="button">ぜんぶ えらぶ</button><button id="kanji-clear-all" type="button">ぜんぶ はずす</button></div>
+        <div id="kanji-picker-grid" class="kanji-picker-grid" role="group" aria-label="習った漢字"></div>
+        <div class="kanji-picker-footer"><button id="kanji-picker-done" class="kanji-picker-done" type="button">この漢字で けってい</button><p id="kanji-picker-warning" class="kanji-picker-warning hidden" role="alert">漢字を1つ以上 えらんでね</p></div>
       </div>
     </section>
 
@@ -361,6 +398,14 @@
         let selectedGrade = 2; // デフォルト2年生
         let selectedCount = 10;
         let selectedTypes = ['yomi', 'kanji'];
+        const LEARNED_KANJI_KEY = 'kanjiForestLearnedKanjiV1';
+        let learnedKanjiByGrade = (() => {
+            try {
+                const saved = JSON.parse(localStorage.getItem(LEARNED_KANJI_KEY) || '{}');
+                return saved && typeof saved === 'object' ? saved : {};
+            } catch (_) { return {}; }
+        })();
+        let pendingLearnedKanji = new Set();
         let questions = [];
         let currentQIndex = 0;
         let score = 0;
@@ -398,8 +443,20 @@
         const DOM = {
             startScreen: document.getElementById('start-screen'),
             setupScreen: document.getElementById('setup-screen'),
+            kanjiPickerScreen: document.getElementById('kanji-picker-screen'),
             coverStartBtn: document.getElementById('cover-start-btn'),
             setupBackBtn: document.getElementById('setup-back-btn'),
+            learnedSummary: document.getElementById('learned-summary'),
+            editLearnedBtn: document.getElementById('edit-learned-btn'),
+            kanjiPickerBack: document.getElementById('kanji-picker-back'),
+            kanjiPickerTitle: document.getElementById('kanji-picker-title'),
+            kanjiPickerCount: document.getElementById('kanji-picker-count'),
+            kanjiPickerHelp: document.getElementById('kanji-picker-help'),
+            kanjiPickerGrid: document.getElementById('kanji-picker-grid'),
+            kanjiSelectAll: document.getElementById('kanji-select-all'),
+            kanjiClearAll: document.getElementById('kanji-clear-all'),
+            kanjiPickerDone: document.getElementById('kanji-picker-done'),
+            kanjiPickerWarning: document.getElementById('kanji-picker-warning'),
             gameScreen: document.getElementById('game-screen'),
             resultScreen: document.getElementById('result-screen'),
             stickerScreen: document.getElementById('sticker-screen'),
@@ -464,11 +521,80 @@
         function switchScreen(screenElement) {
             DOM.startScreen.classList.add('hidden');
             DOM.setupScreen.classList.add('hidden');
+            DOM.kanjiPickerScreen.classList.add('hidden');
             DOM.gameScreen.classList.add('hidden');
             DOM.resultScreen.classList.add('hidden');
             DOM.stickerScreen.classList.add('hidden');
             screenElement.classList.remove('hidden');
             screenElement.scrollTop = 0;
+        }
+
+        function getGradeKanjiIds(grade = selectedGrade) {
+            return (kanjiDict[grade] || []).map(item => item.k);
+        }
+
+        function getLearnedKanjiIds(grade = selectedGrade) {
+            const allIds = getGradeKanjiIds(grade);
+            const valid = new Set(allIds);
+            const saved = learnedKanjiByGrade[grade];
+            if (!Array.isArray(saved)) return allIds;
+            const filtered = saved.filter(id => valid.has(id));
+            return filtered.length ? filtered : allIds;
+        }
+
+        function getLearnedGradePool(grade = selectedGrade) {
+            const selected = new Set(getLearnedKanjiIds(grade));
+            return (kanjiDict[grade] || []).filter(item => selected.has(item.k));
+        }
+
+        function updateLearnedSummary() {
+            const total = getGradeKanjiIds().length;
+            const selected = getLearnedKanjiIds().length;
+            DOM.learnedSummary.textContent = selected === total
+                ? `${selectedGrade}年生の漢字を ぜんぶ出す（${total}字）`
+                : `${selectedGrade}年生で 習った漢字 ${selected}字を出す`;
+            DOM.editLearnedBtn.textContent = selected === total ? '習った漢字を えらぶ' : 'えらび直す';
+        }
+
+        function updateKanjiPickerState() {
+            const total = getGradeKanjiIds().length;
+            const selected = pendingLearnedKanji.size;
+            DOM.kanjiPickerCount.textContent = `${selected} / ${total}字`;
+            DOM.kanjiPickerDone.textContent = selected ? `${selected}字で けってい` : '漢字を えらんでね';
+            DOM.kanjiPickerDone.disabled = selected === 0;
+            DOM.kanjiPickerWarning.classList.toggle('hidden', selected !== 0);
+        }
+
+        function renderKanjiPicker() {
+            const gradePool = kanjiDict[selectedGrade] || [];
+            DOM.kanjiPickerTitle.textContent = `${selectedGrade}年生で 習った漢字`;
+            DOM.kanjiPickerHelp.textContent = '習った漢字をタップしてね。オレンジ色の漢字が問題に出るよ。';
+            DOM.kanjiPickerGrid.replaceChildren();
+            gradePool.forEach(item => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'kanji-choice' + (pendingLearnedKanji.has(item.k) ? ' selected' : '');
+                button.textContent = item.k;
+                button.setAttribute('aria-pressed', String(pendingLearnedKanji.has(item.k)));
+                button.setAttribute('aria-label', `${item.k}を${pendingLearnedKanji.has(item.k) ? 'はずす' : 'えらぶ'}`);
+                button.addEventListener('click', () => {
+                    playClick();
+                    if (pendingLearnedKanji.has(item.k)) pendingLearnedKanji.delete(item.k);
+                    else pendingLearnedKanji.add(item.k);
+                    button.classList.toggle('selected', pendingLearnedKanji.has(item.k));
+                    button.setAttribute('aria-pressed', String(pendingLearnedKanji.has(item.k)));
+                    button.setAttribute('aria-label', `${item.k}を${pendingLearnedKanji.has(item.k) ? 'はずす' : 'えらぶ'}`);
+                    updateKanjiPickerState();
+                });
+                DOM.kanjiPickerGrid.appendChild(button);
+            });
+            updateKanjiPickerState();
+        }
+
+        function openKanjiPicker() {
+            pendingLearnedKanji = new Set(getLearnedKanjiIds());
+            renderKanjiPicker();
+            switchScreen(DOM.kanjiPickerScreen);
         }
 
         function initGradeButtons() {
@@ -490,10 +616,33 @@
                             c.className = 'py-2 rounded-xl font-bold text-sm border-b-4 active:translate-y-1 active:border-b-0 transition-all bg-gray-50 text-gray-600 border-gray-300';
                         }
                     });
+                    updateLearnedSummary();
                 };
                 DOM.gradeButtons.appendChild(btn);
             }
+            updateLearnedSummary();
         }
+
+        DOM.editLearnedBtn.addEventListener('click', () => { playClick(); openKanjiPicker(); });
+        DOM.kanjiPickerBack.addEventListener('click', () => { playClick(); switchScreen(DOM.setupScreen); });
+        DOM.kanjiSelectAll.addEventListener('click', () => {
+            playClick();
+            pendingLearnedKanji = new Set(getGradeKanjiIds());
+            renderKanjiPicker();
+        });
+        DOM.kanjiClearAll.addEventListener('click', () => {
+            playClick();
+            pendingLearnedKanji.clear();
+            renderKanjiPicker();
+        });
+        DOM.kanjiPickerDone.addEventListener('click', () => {
+            if (!pendingLearnedKanji.size) return;
+            playClick();
+            learnedKanjiByGrade[selectedGrade] = getGradeKanjiIds().filter(id => pendingLearnedKanji.has(id));
+            try { localStorage.setItem(LEARNED_KANJI_KEY, JSON.stringify(learnedKanjiByGrade)); } catch (_) {}
+            updateLearnedSummary();
+            switchScreen(DOM.setupScreen);
+        });
 
         DOM.countButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -568,9 +717,10 @@
 
         function getAggregatedKanjiList() {
             let list = [];
-            for (let i = 1; i <= selectedGrade; i++) {
-                if(kanjiDict[i]) list = list.concat(kanjiDict[i]);
+            for (let i = 1; i < selectedGrade; i++) {
+                if (kanjiDict[i]) list = list.concat(kanjiDict[i]);
             }
+            list = list.concat(getLearnedGradePool(selectedGrade));
             return list;
         }
 
@@ -591,7 +741,7 @@
 
         function generateQuestions() {
             const pool = getAggregatedKanjiList();
-            const gradePool = kanjiDict[selectedGrade] || [];
+            const gradePool = getLearnedGradePool(selectedGrade);
             const historyKey = `history_g${selectedGrade}`;
             let playedIds;
             try { playedIds = JSON.parse(localStorage.getItem(historyKey) || '[]'); }
@@ -602,11 +752,14 @@
             const seen = shuffle(pool.filter(item => played.has(item.k)));
             const orderedTargets = fresh.concat(seen);
             const drawTargets = orderedTargets.filter(item => DRAW_SENTENCES[selectedGrade]?.[item.k]);
-            // 「ぜんぶ」で手書きを選んだら、その学年の全字を各遊び方で一度ずつ出す。
+            // 「ぜんぶ」で手書きを選んだら、選択済みの漢字を各遊び方で一度ずつ出す。
             if (selectedCount === 'all' && selectedTypes.includes('draw')) {
                 const result = [];
                 selectedTypes.forEach(mode => {
-                    shuffle([...gradePool]).forEach(target => {
+                    const modeTargets = mode === 'draw'
+                        ? gradePool.filter(target => DRAW_SENTENCES[selectedGrade]?.[target.k])
+                        : gradePool;
+                    shuffle([...modeTargets]).forEach(target => {
                         result.push(createQuestionObj(target, mode, pool, mode === 'draw' ? getDrawPrompt(target) : null));
                     });
                 });
@@ -622,9 +775,15 @@
             const drawSlots = modes.map((mode, index) => mode === 'draw' ? index : -1).filter(index => index >= 0);
             const otherSlots = modes.map((mode, index) => mode !== 'draw' ? index : -1).filter(index => index >= 0);
             drawSlots.concat(otherSlots).forEach(index => {
-                const mode = modes[index];
-                const candidates = mode === 'draw' ? drawTargets : orderedTargets;
-                const target = candidates.find(item => !used.has(item.k));
+                let mode = modes[index];
+                let candidates = mode === 'draw' ? drawTargets : orderedTargets;
+                let target = candidates.find(item => !used.has(item.k));
+                // 手書き例文が足りない場合も、選択問題へ切り替えて空欄を作らない。
+                if (!target && mode === 'draw') {
+                    mode = selectedTypes.includes('yomi') ? 'yomi' : 'kanji';
+                    candidates = orderedTargets;
+                    target = candidates.find(item => !used.has(item.k));
+                }
                 if (!target) return;
                 used.add(target.k);
                 targets.push(target);
@@ -632,7 +791,7 @@
             });
             const nextHistory = playedIds.concat(targets.map(item => item.k)).slice(-pool.length);
             try { localStorage.setItem(historyKey, JSON.stringify(nextHistory)); } catch (_) {}
-            return result;
+            return result.filter(Boolean);
         }
 
         function createQuestionObj(targetKanji, type, pool, drawPrompt = null) {
@@ -641,6 +800,10 @@
             }
             let correctAns, displayStr, qText;
             let choices = [];
+            const makeChoices = candidates => {
+                const unique = [...new Set(candidates.filter(item => item && item !== correctAns))];
+                return [correctAns, ...shuffle(unique).slice(0, 3)];
+            };
             
             let availablePatterns = [];
             if (type === 'yomi') {
@@ -662,44 +825,22 @@
                 qText = "この漢字の 音読みを ひとつ えらぼう";
                 displayStr = targetKanji.k;
                 correctAns = targetKanji.on[Math.floor(Math.random() * targetKanji.on.length)];
-                choices.push(correctAns);
-                while(choices.length < 4) {
-                    let rK = pool[Math.floor(Math.random() * pool.length)];
-                    if (rK.on.length > 0) {
-                        let rY = rK.on[Math.floor(Math.random() * rK.on.length)];
-                        if (!choices.includes(rY) && !targetKanji.on.includes(rY)) choices.push(rY);
-                    }
-                }
+                choices = makeChoices(pool.flatMap(item => item.on).filter(reading => !targetKanji.on.includes(reading)));
             } else if (pattern === 'yomi_kun') {
                 qText = "この漢字の 訓読みを ひとつ えらぼう";
                 displayStr = targetKanji.k;
                 correctAns = targetKanji.kun[Math.floor(Math.random() * targetKanji.kun.length)];
-                choices.push(correctAns);
-                while(choices.length < 4) {
-                    let rK = pool[Math.floor(Math.random() * pool.length)];
-                    if (rK.kun.length > 0) {
-                        let rY = rK.kun[Math.floor(Math.random() * rK.kun.length)];
-                        if (!choices.includes(rY) && !targetKanji.kun.includes(rY)) choices.push(rY);
-                    }
-                }
+                choices = makeChoices(pool.flatMap(item => item.kun).filter(reading => !targetKanji.kun.includes(reading)));
             } else if (pattern === 'kanji_on') {
                 correctAns = targetKanji.k;
                 displayStr = targetKanji.on[Math.floor(Math.random() * targetKanji.on.length)];
                 qText = `「${displayStr}」と読む 漢字は？`;
-                choices.push(correctAns);
-                while(choices.length < 4) {
-                    let rK = pool[Math.floor(Math.random() * pool.length)];
-                    if (!choices.includes(rK.k) && !rK.on.includes(displayStr)) choices.push(rK.k);
-                }
+                choices = makeChoices(pool.filter(item => !item.on.includes(displayStr)).map(item => item.k));
             } else if (pattern === 'kanji_kun') {
                 correctAns = targetKanji.k;
                 displayStr = targetKanji.kun[Math.floor(Math.random() * targetKanji.kun.length)];
                 qText = `「${displayStr}」と読む 漢字は？`;
-                choices.push(correctAns);
-                while(choices.length < 4) {
-                    let rK = pool[Math.floor(Math.random() * pool.length)];
-                    if (!choices.includes(rK.k) && !rK.kun.includes(displayStr)) choices.push(rK.k);
-                }
+                choices = makeChoices(pool.filter(item => !item.kun.includes(displayStr)).map(item => item.k));
             } else {
                 // フォールバック
                 qText = type === 'yomi' ? "この漢字の よみかたは？" : "このよみかたの 漢字は？";
@@ -710,12 +851,7 @@
                     correctAns = targetKanji.k;
                     displayStr = targetKanji.r[Math.floor(Math.random() * targetKanji.r.length)] || targetKanji.k;
                 }
-                choices.push(correctAns);
-                while(choices.length < 4) {
-                    let rK = pool[Math.floor(Math.random() * pool.length)];
-                    let item = type === 'yomi' ? (rK.r[0] || rK.k) : rK.k;
-                    if (!choices.includes(item)) choices.push(item);
-                }
+                choices = makeChoices(pool.map(item => type === 'yomi' ? (item.r[0] || item.k) : item.k));
             }
 
             shuffle(choices);
@@ -795,10 +931,12 @@
             if (isDraw) resetHandwritingQuestion();
             
             DOM.choiceBtns.forEach((btn, idx) => {
-                btn.textContent = q.choices[idx];
+                const choice = q.choices[idx];
+                btn.hidden = isDraw || choice === undefined;
+                btn.textContent = choice ?? '';
                 btn.className = 'choice-btn py-6 bg-green-50 text-green-800 font-bold text-2xl rounded-2xl border-b-[6px] border-green-200 active:translate-y-[6px] active:border-b-0 transition-all';
-                btn.disabled = false;
-                btn.onclick = () => handleChoice(btn, q.choices[idx], q.correct);
+                btn.disabled = choice === undefined;
+                btn.onclick = choice === undefined ? null : () => handleChoice(btn, choice, q.correct);
             });
 
             DOM.resultMark.style.opacity = '0';
