@@ -67,6 +67,12 @@
         .learned-summary { margin:0 0 10px; color:#49695a; font-size:13px; font-weight:800; line-height:1.55; }
         .learned-edit { width:100%; min-height:48px; border:2px solid #9fc9ab; border-bottom-width:5px; border-radius:14px; background:#f2fbf3; color:var(--forest); font-size:15px; font-weight:900; }
         .learned-edit:active { transform:translateY(3px); border-bottom-width:2px; }
+        .scope-options { display:grid; grid-template-columns:1fr; gap:9px; }
+        .scope-option { min-height:58px; padding:10px 12px; border:2px solid #cbdccf; border-bottom-width:5px; border-radius:15px; background:#fff; color:#54685e; text-align:left; font-size:15px; font-weight:1000; }
+        .scope-option small { display:block; margin-top:3px; color:#718078; font-size:11px; font-weight:800; line-height:1.45; }
+        .scope-option.active { border-color:#cf721f; border-bottom-color:#a65416; background:#ffad49; color:#fff; }
+        .scope-option.active small { color:#fff8e9; }
+        .scope-summary { margin:10px 0 0; padding:8px 10px; border-radius:11px; background:#eef7ef; color:var(--forest); font-size:12px; font-weight:900; line-height:1.5; }
         .start-primary { background:linear-gradient(#ffb855,#ec8e30); color:#fff; border:0; border-bottom:5px solid #bd671e; font-size:21px; font-weight:1000; border-radius:18px; padding:14px 20px; box-shadow:0 8px 18px #b77a2a30; }
         .start-secondary { background:#fff; color:var(--forest); border:2px solid #bad9c1; border-bottom-width:5px; font-size:14px; font-weight:900; border-radius:16px; padding:10px 16px; }
         .start-primary:active, .start-secondary:active { transform:translateY(3px); border-bottom-width:2px; }
@@ -132,7 +138,7 @@
         .setup-screen label { min-height:62px; }
         .setup-screen .setup-actions { align-self:stretch; }
         .kanji-picker-screen { background:linear-gradient(155deg,#fff9e8,#e8f5e9); overflow-y:auto; }
-        .kanji-picker-shell { width:min(100%,760px); min-height:100%; margin:auto; padding:16px 16px max(92px,calc(env(safe-area-inset-bottom) + 76px)); }
+        .kanji-picker-shell { width:min(100%,760px); min-height:100%; margin:auto; padding:16px 16px max(16px,env(safe-area-inset-bottom)); scroll-padding-bottom:120px; }
         .kanji-picker-header { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:10px; position:sticky; top:0; z-index:2; padding:6px 0 12px; background:linear-gradient(#fff9e8 78%,transparent); }
         .kanji-picker-header h2 { margin:0; color:var(--forest); text-align:center; font-size:clamp(19px,3vw,29px); font-weight:1000; }
         .kanji-picker-back { min-height:44px; padding:8px 12px; border:2px solid #bfd7bd; border-radius:13px; background:#fff; color:var(--forest); font-weight:900; white-space:nowrap; }
@@ -143,7 +149,7 @@
         .kanji-picker-grid { display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:8px; }
         .kanji-choice { min-width:0; aspect-ratio:1; border:2px solid #cadbcf; border-bottom-width:4px; border-radius:12px; background:#fff; color:#5e6d65; font-size:clamp(20px,4vw,30px); font-weight:900; }
         .kanji-choice.selected { border-color:#d97920; background:#ffad49; color:#fff; box-shadow:0 3px 8px #d67d2730; }
-        .kanji-picker-footer { position:fixed; z-index:3; left:50%; bottom:0; transform:translateX(-50%); width:min(100%,760px); padding:10px 16px max(12px,env(safe-area-inset-bottom)); background:#fffdf3eF; box-shadow:0 -5px 18px #35564120; backdrop-filter:blur(8px); }
+        .kanji-picker-footer { position:sticky; z-index:3; left:auto; bottom:0; transform:none; width:100%; margin-top:18px; padding:10px 0 max(12px,env(safe-area-inset-bottom)); background:#fffdf3f2; box-shadow:0 -5px 18px #35564120; backdrop-filter:blur(8px); }
         .kanji-picker-done { width:100%; min-height:52px; border:0; border-bottom:5px solid #256047; border-radius:16px; background:#328060; color:#fff; font-size:18px; font-weight:1000; }
         .kanji-picker-done:disabled { border-bottom-color:#aab8ae; background:#c8d1ca; color:#fff; }
         .kanji-picker-warning { margin:7px 0 0; color:#c24132; text-align:center; font-size:12px; font-weight:900; }
@@ -217,11 +223,19 @@
         .sticker-card.locked { background:#eef2ea; border-color:#d8ded8; box-shadow:none; }
         .sticker-card img { display:block; width:min(100%,130px); aspect-ratio:1; object-fit:contain; margin:auto; }
         .sticker-card.locked img { filter:grayscale(1); opacity:.16; }
-        .sticker-card.gold-sticker:not(.locked) img, #sticker-reward .gold-reward { border:4px solid #d9a726; border-radius:50%; box-shadow:0 0 0 3px #fff3bc,0 0 16px #e7b83e80; }
+        .sticker-card.gold-sticker:not(.locked) img, #sticker-reward .gold-reward { border:4px solid #d9a726; border-radius:50%; box-shadow:0 0 0 3px #fff3bc,0 0 18px #e7b83e99; }
         .sticker-card span { display:block; margin-top:5px; color:var(--forest); font-size:14px; font-weight:900; }
         .sticker-card.locked span { color:#7d8b82; }
         .sticker-back { position:sticky; bottom:0; width:min(100%,440px); align-self:center; padding:12px; border-radius:16px; background:#2e7659; color:white; font-weight:900; font-size:18px; box-shadow:0 3px 10px #234d3740; }
-        #sticker-reward img { width:110px; height:110px; object-fit:contain; display:block; margin:8px auto 2px; }
+        .result-score-card { margin:0 0 18px; padding:18px 14px; border:0; border-radius:22px; background:linear-gradient(145deg,#eff8ed,#e4f3e9); box-shadow:0 6px 16px #2e765915; }
+        .result-score-label { margin:0; color:#39775f; font-size:14px; font-weight:900; }
+        .result-score-value { margin-top:2px; color:#1f604d; font-size:clamp(48px,14vw,68px); font-weight:1000; line-height:1; }
+        .result-score-unit { margin-left:5px; color:#2f7258; font-size:20px; font-weight:900; }
+        #sticker-reward { margin:4px 0 20px; padding:20px 6px 6px; border:0; border-top:2px dashed #cfe2d4; border-radius:0; background:transparent; color:#233f36; text-align:center; font-weight:900; }
+        #sticker-reward p { margin:0; line-height:1.55; }
+        #sticker-reward p:first-child { font-size:clamp(16px,4vw,19px); }
+        #sticker-reward p:last-child { margin-top:8px; color:var(--forest); font-size:16px; }
+        #sticker-reward img { width:124px; height:124px; object-fit:contain; display:block; margin:14px auto 2px; padding:5px; border-radius:50%; background:#fff; box-shadow:0 0 0 3px #fff,0 8px 22px #2458472b; }
         @media (max-width:650px) { .sticker-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; } .sticker-card span { font-size:12px; } }
         @media (max-width:370px) { .sticker-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
         @media (max-height:650px) { #game-screen .choice-btn { min-height:64px; padding-top:12px; padding-bottom:12px; } }
@@ -253,16 +267,17 @@
         <header class="setup-header"><button id="setup-back-btn" class="setup-back">← もどる</button><h1 id="setup-title">ぼうけんの じゅんび</h1><button class="sound-toggle setup-header-mark" type="button" aria-label="音を消す">🔊</button></header>
         <p class="setup-intro">学年と あそびかたを えらんでね。<br>いくつかえらぶと、問題ごとにランダムに変わるよ。</p>
         <div class="setup">
-          <section class="setup-card"><h2>① がくねんを えらぼう<small>えらんだ学年までの漢字が出るよ</small></h2><div class="grid grid-cols-3 gap-2" id="grade-buttons"></div></section>
+          <section class="setup-card"><h2>① がくねんを えらぼう<small>前の学年を復習するかは、あとで選べるよ</small></h2><div class="grid grid-cols-3 gap-2" id="grade-buttons"></div></section>
           <section class="setup-card"><h2>② 習った漢字を えらぼう<small>いまの学年で、習ったところまでにできるよ</small></h2><p id="learned-summary" class="learned-summary"></p><button id="edit-learned-btn" class="learned-edit" type="button">習った漢字を えらぶ</button></section>
-          <section class="setup-card"><h2>③ もんだいの かず</h2><div class="flex justify-between gap-1.5" id="count-buttons">
+          <section class="setup-card"><h2>③ 出題する学年<small>前の学年の漢字を復習するか選べるよ</small></h2><div id="scope-options" class="scope-options"><button id="scope-current" class="scope-option" type="button"><span>今の学年だけ</span><small id="scope-current-detail"></small></button><button id="scope-review" class="scope-option" type="button"><span>前の学年も復習</span><small id="scope-review-detail"></small></button></div><p id="scope-summary" class="scope-summary"></p></section>
+          <section class="setup-card"><h2>④ もんだいの かず</h2><div class="flex justify-between gap-1.5" id="count-buttons">
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-gray-50 text-gray-600 border-gray-300" data-val="5">5問</button>
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-orange-500 text-white border-orange-700" data-val="10">10問</button>
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-gray-50 text-gray-600 border-gray-300" data-val="20">20問</button>
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-gray-50 text-gray-600 border-gray-300" data-val="30">30問</button>
             <button class="count-btn flex-1 py-2 rounded-xl font-bold text-xs border-b-4 transition-all bg-gray-50 text-gray-600 border-gray-300" data-val="all">ぜんぶ</button>
           </div></section>
-          <section class="setup-card"><h2>④ あそびかたを えらぼう</h2><div class="flex flex-col gap-2">
+          <section class="setup-card"><h2>⑤ あそびかたを えらぼう</h2><div class="flex flex-col gap-2">
             <label class="flex items-center p-2.5 border-2 border-green-100 rounded-xl bg-green-50"><input type="checkbox" id="type-yomi" checked class="w-5 h-5 shrink-0"><span class="ml-3"><strong class="block text-sm">よみかた</strong><small class="text-gray-500">漢字の読み方を えらぶ</small></span></label>
             <label class="flex items-center p-2.5 border-2 border-green-100 rounded-xl bg-green-50"><input type="checkbox" id="type-kanji" checked class="w-5 h-5 shrink-0"><span class="ml-3"><strong class="block text-sm">かんじ さがし</strong><small class="text-gray-500">読み方に あう漢字を えらぶ</small></span></label>
             <label class="flex items-center p-2.5 border-2 border-green-100 rounded-xl bg-green-50"><input type="checkbox" id="type-draw" class="w-5 h-5 shrink-0"><span class="ml-3"><strong class="block text-sm">ゆびで かんじを かく</strong><small class="text-gray-500">短い文の □ に入る字を書く</small></span></label>
@@ -342,17 +357,12 @@
                 <h2 class="text-2xl font-black text-orange-500 mb-1">けっか はっぴょう</h2>
                 <p class="text-gray-500 text-sm font-bold mb-5" id="result-grade-text">2年生 - 10問</p>
                 
-                <div class="mb-5 bg-blue-50 rounded-2xl py-4 border border-blue-100">
-                    <p class="text-xs font-bold text-blue-500">トータルスコア</p>
-                    <div class="text-5xl font-black text-blue-600 mt-1"><span id="final-score">0</span><span class="text-lg ml-1">てん</span></div>
+                <div class="result-score-card">
+                    <p class="result-score-label">トータルスコア</p>
+                    <div class="result-score-value"><span id="final-score">0</span><span class="result-score-unit">てん</span></div>
                 </div>
 
-                <div class="mb-5">
-                    <p class="text-xs font-bold text-gray-500 mb-1">こんかいの ひょうか</p>
-                    <div id="rank-display" class="text-[80px] font-black text-red-500 bounce-in leading-none drop-shadow-md"></div>
-                </div>
-
-                <div id="sticker-reward" class="mb-5 rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-3 text-center font-bold" aria-live="polite"></div>
+                <div id="sticker-reward" aria-live="polite"></div>
 
                 <button id="result-stickers-btn" class="w-full py-3.5 mb-3 bg-emerald-600 text-white text-base font-bold rounded-full shadow border-b-4 border-emerald-800 active:translate-y-1 active:border-b-0 transition-all">📒 シール手帳を見る</button>
                 <button id="home-btn" class="w-full py-3.5 bg-gray-200 text-gray-700 text-base font-bold rounded-full shadow border-b-4 border-gray-400 active:translate-y-1 active:border-b-0 transition-all">さいしょに もどる</button>
@@ -399,6 +409,7 @@
         let selectedCount = 10;
         let selectedTypes = ['yomi', 'kanji'];
         const LEARNED_KANJI_KEY = 'kanjiForestLearnedKanjiV1';
+        const REVIEW_SCOPE_KEY = 'kanjiForestReviewPreviousV1';
         let learnedKanjiByGrade = (() => {
             try {
                 const saved = JSON.parse(localStorage.getItem(LEARNED_KANJI_KEY) || '{}');
@@ -406,6 +417,12 @@
             } catch (_) { return {}; }
         })();
         let pendingLearnedKanji = new Set();
+        let reviewPreviousByGrade = (() => {
+            try {
+                const saved = JSON.parse(localStorage.getItem(REVIEW_SCOPE_KEY) || '{}');
+                return saved && typeof saved === 'object' ? saved : {};
+            } catch (_) { return {}; }
+        })();
         let questions = [];
         let currentQIndex = 0;
         let score = 0;
@@ -448,6 +465,11 @@
             setupBackBtn: document.getElementById('setup-back-btn'),
             learnedSummary: document.getElementById('learned-summary'),
             editLearnedBtn: document.getElementById('edit-learned-btn'),
+            scopeCurrent: document.getElementById('scope-current'),
+            scopeReview: document.getElementById('scope-review'),
+            scopeCurrentDetail: document.getElementById('scope-current-detail'),
+            scopeReviewDetail: document.getElementById('scope-review-detail'),
+            scopeSummary: document.getElementById('scope-summary'),
             kanjiPickerBack: document.getElementById('kanji-picker-back'),
             kanjiPickerTitle: document.getElementById('kanji-picker-title'),
             kanjiPickerCount: document.getElementById('kanji-picker-count'),
@@ -499,7 +521,6 @@
             scorePopup: document.getElementById('score-popup'),
             resultGradeText: document.getElementById('result-grade-text'),
             finalScore: document.getElementById('final-score'),
-            rankDisplay: document.getElementById('rank-display'),
             viewStickersBtn: document.getElementById('view-stickers-btn')
         };
 
@@ -547,6 +568,42 @@
             return (kanjiDict[grade] || []).filter(item => selected.has(item.k));
         }
 
+        function includesPreviousGrades(grade = selectedGrade) {
+            return grade > 1 && reviewPreviousByGrade[grade] !== false;
+        }
+
+        function getPreviousGradeCount(grade = selectedGrade) {
+            let count = 0;
+            for (let i = 1; i < grade; i++) count += (kanjiDict[i] || []).length;
+            return count;
+        }
+
+        function saveReviewScope(includePrevious) {
+            reviewPreviousByGrade[selectedGrade] = Boolean(includePrevious);
+            try { localStorage.setItem(REVIEW_SCOPE_KEY, JSON.stringify(reviewPreviousByGrade)); } catch (_) {}
+            updateScopeControls();
+        }
+
+        function updateScopeControls() {
+            const currentCount = getLearnedKanjiIds().length;
+            const previousCount = getPreviousGradeCount();
+            const includePrevious = includesPreviousGrades();
+            DOM.scopeCurrentDetail.textContent = `${selectedGrade}年生で選んだ ${currentCount}字だけ`;
+            DOM.scopeReviewDetail.textContent = selectedGrade === 1
+                ? '1年生では前の学年はありません'
+                : selectedGrade === 2
+                    ? `1年生の ${previousCount}字も出す`
+                    : `1〜${selectedGrade - 1}年生の ${previousCount}字も出す`;
+            DOM.scopeReview.hidden = selectedGrade === 1;
+            DOM.scopeCurrent.classList.toggle('active', !includePrevious);
+            DOM.scopeReview.classList.toggle('active', includePrevious);
+            DOM.scopeCurrent.setAttribute('aria-pressed', String(!includePrevious));
+            DOM.scopeReview.setAttribute('aria-pressed', String(includePrevious));
+            DOM.scopeSummary.textContent = includePrevious
+                ? `出題範囲：前の学年 ${previousCount}字 ＋ ${selectedGrade}年生で選んだ ${currentCount}字`
+                : `出題範囲：${selectedGrade}年生で選んだ ${currentCount}字だけ`;
+        }
+
         function updateLearnedSummary() {
             const total = getGradeKanjiIds().length;
             const selected = getLearnedKanjiIds().length;
@@ -554,6 +611,7 @@
                 ? `${selectedGrade}年生の漢字を ぜんぶ出す（${total}字）`
                 : `${selectedGrade}年生で 習った漢字 ${selected}字を出す`;
             DOM.editLearnedBtn.textContent = selected === total ? '習った漢字を えらぶ' : 'えらび直す';
+            updateScopeControls();
         }
 
         function updateKanjiPickerState() {
@@ -624,6 +682,8 @@
         }
 
         DOM.editLearnedBtn.addEventListener('click', () => { playClick(); openKanjiPicker(); });
+        DOM.scopeCurrent.addEventListener('click', () => { playClick(); saveReviewScope(false); });
+        DOM.scopeReview.addEventListener('click', () => { if (selectedGrade > 1) { playClick(); saveReviewScope(true); } });
         DOM.kanjiPickerBack.addEventListener('click', () => { playClick(); switchScreen(DOM.setupScreen); });
         DOM.kanjiSelectAll.addEventListener('click', () => {
             playClick();
@@ -717,8 +777,10 @@
 
         function getAggregatedKanjiList() {
             let list = [];
-            for (let i = 1; i < selectedGrade; i++) {
-                if (kanjiDict[i]) list = list.concat(kanjiDict[i]);
+            if (includesPreviousGrades()) {
+                for (let i = 1; i < selectedGrade; i++) {
+                    if (kanjiDict[i]) list = list.concat(kanjiDict[i]);
+                }
             }
             list = list.concat(getLearnedGradePool(selectedGrade));
             return list;
@@ -742,7 +804,7 @@
         function generateQuestions() {
             const pool = getAggregatedKanjiList();
             const gradePool = getLearnedGradePool(selectedGrade);
-            const historyKey = `history_g${selectedGrade}`;
+            const historyKey = `history_g${selectedGrade}_${includesPreviousGrades() ? 'review' : 'current'}`;
             let playedIds;
             try { playedIds = JSON.parse(localStorage.getItem(historyKey) || '[]'); }
             catch (_) { playedIds = []; }
@@ -758,7 +820,7 @@
                 selectedTypes.forEach(mode => {
                     const modeTargets = mode === 'draw'
                         ? gradePool.filter(target => DRAW_SENTENCES[selectedGrade]?.[target.k])
-                        : gradePool;
+                        : pool;
                     shuffle([...modeTargets]).forEach(target => {
                         result.push(createQuestionObj(target, mode, pool, mode === 'draw' ? getDrawPrompt(target) : null));
                     });
@@ -1123,18 +1185,6 @@
                 DOM.finalScore.textContent = currentScore;
             }, 30);
 
-            // 最高得点は「問題数 × 10点」
-            let maxPossible = questions.length * 10;
-            let ratio = score / maxPossible;
-            let rank = 'C';
-            if(ratio >= 0.9) rank = 'S';
-            else if(ratio >= 0.7) rank = 'A';
-            else if(ratio >= 0.5) rank = 'B';
-            
-            DOM.rankDisplay.textContent = rank;
-            DOM.rankDisplay.className = 'text-[80px] font-black text-red-500 drop-shadow-md';
-            void DOM.rankDisplay.offsetWidth;
-            DOM.rankDisplay.classList.add('bounce-in');
         }
 
         function getStickers() {
